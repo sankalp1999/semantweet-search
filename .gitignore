@@ -1,0 +1,5 @@
+.DS_Store
+venv
+twitter-archive/
+*.csv
+data/

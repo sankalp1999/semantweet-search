@@ -1,0 +1,97 @@
+body {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #F0F0F0;
+    color: #000000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+
+.search-container {
+    width: 80%;
+    max-width: 800px;
+    margin-top: 20px; /* Adjusted to add space at the top */
+    margin-bottom: 20px;
+    text-align: center;
+    padding: 20px;
+    /* Ensured that the search-container is not fixed or absolutely positioned */
+}
+
+.form-flex-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+input[type="text"] {
+    flex-grow: 1;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    padding: 10px;
+    border: 2px solid #000000;
+    border-radius: 20px;
+    outline: none;
+}
+
+button {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 16px;
+    padding: 10px 20px;
+    background-color: #D3D3D3;
+    border: none;
+    cursor: pointer;
+    border-radius: 20px;
+}
+
+#resultsContainer {
+    width: 80%;
+    max-width: 800px;
+    margin-top: 20px; /* Space between search area and results */
+    text-align: center;
+}
+
+.tweet-card {
+    background-color: #FFFFFF;
+    border: 2px solid #D3D3D3;
+    padding: 20px;
+    margin-bottom: 20px; /* Increased space between cards */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    display: block; /* Ensures the link takes up the full card area */
+    color: inherit; /* Ensures text colors inherit from the body */
+    text-decoration: none; /* Removes underline from links */
+    max-width: 600px; /* Limits the maximum width of the card */
+    margin: 10px auto; 
+}
+
+.tweet-card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2); /* Enhances shadow on hover */
+}
+
+.tweet-content p {
+    font-family: Arial, Helvetica, sans-serif; /* Makes tweet text more readable */
+}
+
+.tweet-images-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
+}
+
+.tweet-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* This will cover the area and crop the image if necessary */
+    aspect-ratio: 1 / 1; /* This sets the image to a square aspect ratio */
+    border-radius: 10px;
+}
+
+.single-tweet-image {
+    max-width: 100%; /* Limits the image to the width of its container */
+    height: 100%; /* Maintains the natural aspect ratio */
+    border-radius: 10px;
+}
+
