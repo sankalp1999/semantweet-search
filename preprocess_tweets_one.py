@@ -6,14 +6,6 @@ import re
 import calendar
 
 extract_path = r"/Users/sankalp/Desktop/tweet_project" # Path to extract twitter data
-embeddings_path = r"/Users/sankalp/Desktop/tweet_project" # Path to save embeddings
-
-# Extract the .zip file
-# print("Starting extraction of zip file...")
-# with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-#     zip_ref.extractall(extract_path)
-# print("Finished extraction of zip file.")
-
 
 def is_media_present(tweet):
     media_lists = tweet.get('extended_entities', {}).get('media', []) + tweet.get('entities', {}).get('media', [])
