@@ -4,36 +4,67 @@
     <meta charset="UTF-8">
     <title>Old-School Internet Search</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        #date-range-container {
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <div class="search-container">
         <form action="/" method="post">
             <div class="form-flex-container">
                 <input type="text" name="search" placeholder="Type your query..." autofocus>
+                <button type="button" id="more-options-button">More Options</button>
                 <button type="submit">Search</button>
+            </div>
+            <!-- Hidden Date Range Container -->
+            <div id="date-range-container">
+                <!-- Optional From Year Input -->
+                <input type="number" name="year_from" placeholder="Year From (optional)" min="2006" max="2025">
+                <!-- Optional To Year Input -->
+                <input type="number" name="year_to" placeholder="Year To (optional)" min="2006" max="2025">
+                <!-- Optional From Month Input -->
+                <input type="text" name="month_from" placeholder="Month From (e.g., Jan)" pattern="[A-Za-z]{3}" title="Three letter month abbreviation">
+
+                <!-- Optional To Month Input -->
+                <input type="text" name="month_to" placeholder="Month To (e.g., Dec)" pattern="[A-Za-z]{3}" title="Three letter month abbreviation">
+
             </div>
         </form>
     </div>
     <div id="resultsContainer">
         {% for result in results %}
-            <a href="https://{{ result.url }}" target="_blank" class="tweet-card">
-                <div class="tweet-content">
-                    <p>{{ result.text }}</p>
-                    <!-- Check if there are multiple images -->
-                    {% if result.media_urls and result.media_urls|length > 1 %}
-                        <div class="tweet-images-container">
-                            <!-- Display each image in a square -->
-                            {% for image_url in result.media_urls %}
-                                <img src="{{ image_url }}" alt="Tweet Image" class="tweet-image">
-                            {% endfor %}
-                        </div>
-                    {% elif result.media_urls %}
-                        <!-- If only one image, display it in its original aspect ratio -->
-                        <img src="{{ result.media_urls[0] }}" alt="Tweet Image" class="single-tweet-image">
-                    {% endif %}
-                </div>
-            </a>
+        <a href="https://{{ result.url }}" target="_blank" class="tweet-card">
+            <div class="tweet-content">
+                <p>{{ result.text }}</p>
+                <!-- Check if there are multiple images -->
+                {% if result.media_urls and result.media_urls|length > 1 %}
+                    <div class="tweet-images-container">
+                        <!-- Display each image in a square -->
+                        {% for image_url in result.media_urls %}
+                            <img src="{{ image_url }}" alt="Tweet Image" class="tweet-image">
+                        {% endfor %}
+                    </div>
+                {% elif result.media_urls %}
+                    <!-- If only one image, display it in its original aspect ratio -->
+                    <img src="{{ result.media_urls[0] }}" alt="Tweet Image" class="single-tweet-image">
+                {% endif %}
+            </div>
+        </a>
+
         {% endfor %}
     </div>
+
+    <script>
+        document.getElementById('more-options-button').onclick = function() {
+            var dateRangeContainer = document.getElementById('date-range-container');
+            if (dateRangeContainer.style.display === 'none') {
+                dateRangeContainer.style.display = 'block';
+            } else {
+                dateRangeContainer.style.display = 'none';
+            }
+        };
+    </script>
 </body>
 </html>
