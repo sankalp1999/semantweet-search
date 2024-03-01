@@ -7,7 +7,7 @@ import calendar
 from pathlib import Path
 
 
-
+project_root_directory = Path(__file__).parent.absolute()
 
 def is_media_present(tweet):
     media_lists = tweet.get('extended_entities', {}).get('media', []) + tweet.get('entities', {}).get('media', [])
@@ -56,7 +56,7 @@ def format_tweet(tweet):
 
 
 # Load the tweet data
-with open(os.path.join(extract_path, 'twitter-archive','data', 'tweets.js'), 'r', encoding='utf-8') as f:
+with open(os.path.join(project_root_directory, 'twitter-archive','data', 'tweets.js'), 'r', encoding='utf-8') as f:
     data = f.read().replace('window.YTD.tweets.part0 = ', '') 
     raw_archive = json.loads(data)
 
@@ -69,13 +69,12 @@ formatted_tweets = [format_tweet(tweet) for tweet in tweets]
 df = pd.DataFrame(formatted_tweets)
 
 # Specify CSV file path
-root_directory = Path(__file__).parent.absolute()
-csv_file_path = os.path.join(root_directory, 'formatted_tweets_v3.csv')
+
+csv_file_path = os.path.join(project_root_directory, 'formatted_tweets_v3.csv')
 
 # Save to CSV
 df.to_csv(csv_file_path, index=False)
 print("Saved formatted tweets to CSV.")
-
 
 
 
