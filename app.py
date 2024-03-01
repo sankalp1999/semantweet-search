@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request
 import lancedb
 import json
-import openai
-
+import re
+import calendar
+import datetime
 # Initialize the Flask application
 app = Flask(__name__)
 
@@ -27,17 +28,59 @@ username = get_handle(file_path)
 print(f"Username: {username}")
 
 
+
+def get_month_number(month_name):
+    """Return the month number for a three-letter month abbreviation."""
+    if month_name:
+        try:
+            return list(calendar.month_abbr).index(month_name.title())
+        except ValueError:
+            return None
+    return None
+
+def create_query(year_from, month_from, year_to, month_to):
+    # Convert month abbreviations to numbers
+    month_from_number = get_month_number(month_from)
+    month_to_number = get_month_number(month_to)
+    
+    # Create the query string based on the available inputs
+    query_parts = []
+    if year_from:
+        query_parts.append(f"year >= {year_from}")
+    if year_to:
+        query_parts.append(f"year <= {year_to}")
+    if month_from_number:
+        query_parts.append(f"month >= {month_from_number}")
+    if month_to_number:
+        query_parts.append(f"month <= {month_to_number}")
+    
+    return " and ".join(query_parts)
+
+
 def parse_tweets(metadata_list):
     parsed_tweets = []
     for json_str in metadata_list:
         try:
             tweet = json.loads(json_str)  # Assuming json_str is a JSON string of the tweet
             
-            # Extract the tweet ID
+            # get the tweet id to form url
             tweet_id = tweet.get('id_str', 'No ID available')
             
-            # Extract the full text
+            # Parse the timestamp string into a datetime object
+            dt_object = datetime.datetime.strptime(tweet['created_at'], '%a %b %d %H:%M:%S %z %Y')
+    
+            # Extract the year, day, and month
+            year = dt_object.strftime('%Y') 
+            day = dt_object.strftime('%d')   
+            month = dt_object.strftime('%b') 
+
+            # extract text and remove https://t.co url
             full_text = tweet.get('full_text', 'No text available')
+            pattern = r'https?://t\.co/[a-zA-Z0-9]+'  
+            full_text = re.sub(pattern, '', full_text)
+            full_text = full_text + f"\n {month},{day} {year}"
+            
+            print(full_text)
 
             username_handle = tweet.get('user', {}).get('screen_name', 'No username available')
             
@@ -91,8 +134,19 @@ def index():
     if request.method == 'POST':
     
         query = request.form.get('search')
+
+        year_from = request.form.get('year_from', '2006')
+        month_from = request.form.get('month_from', 'Jan')
+        year_to = request.form.get('year_to', '2024')
+        month_to = request.form.get('month_to', 'Dec')
+
+        # Convert year_from and year_to to integers if they are not None
+        year_from = int(year_from) if year_from else 2006
+        year_to = int(year_to) if year_to else 2024
         
-        docs = table.search(query).limit(10).to_pandas()
+        date_query = create_query(year_from, month_from, year_to, month_to)
+        print(date_query)
+        docs = table.search(query).where(date_query, prefilter=True).limit(10).to_pandas()
       
         metadata_list = docs['metadata'].tolist()
 
