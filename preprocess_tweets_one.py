@@ -3,6 +3,7 @@ import os
 import json
 import datetime
 import re
+import calendar
 
 extract_path = r"/Users/sankalp/Desktop/tweet_project" # Path to extract twitter data
 embeddings_path = r"/Users/sankalp/Desktop/tweet_project" # Path to save embeddings
@@ -13,37 +14,40 @@ embeddings_path = r"/Users/sankalp/Desktop/tweet_project" # Path to save embeddi
 #     zip_ref.extractall(extract_path)
 # print("Finished extraction of zip file.")
 
-# Determine if there is media to append the media token
+
+def is_media_present(tweet):
+    media_lists = tweet.get('extended_entities', {}).get('media', []) + tweet.get('entities', {}).get('media', [])
+    photo_media = [media for media in media_lists if media['type'] == 'photo' and media.get('media_url_https') and media.get('id_str')]
+    return len(photo_media) > 0
 
 
-def format_timestamp(timestamp_str):
-    """Removes the time and timezone offset from a timestamp.
-
-    Args:
-        timestamp_str: The input timestamp string (e.g., 'Sun Jan 07 06:29:03 +0000 2024')
-
-    Returns:
-        The timestamp string with time and timezone offset removed (e.g., 'Sun Jan 07 2024')
-    """
-
-    dt_object = datetime.datetime.strptime(timestamp_str, '%a %b %d %H:%M:%S %z %Y')
-    formatted_timestamp = dt_object.strftime('year:%Y')
-    year = dt_object.strftime('%Y')
-    month = dt_object.strftime('%M')
-    return [formatted_timestamp, year, month]
-
+def get_month_number(month_name):
+    """Return the month number for a three-letter month abbreviation."""
+    if month_name:
+        try:
+            return list(calendar.month_abbr).index(month_name.title())
+        except ValueError:
+            return None
+    return None
 
 def format_tweet(tweet):
     tweet_id = tweet['id_str']
     media_type = tweet["entities"]["media"][0]["type"] if "media" in tweet.get("entities", {}) else ""
 
-    timestamp_str, year, month = format_timestamp(tweet['created_at'])
+    dt_object = datetime.datetime.strptime(tweet['created_at'], '%a %b %d %H:%M:%S %z %Y')
+    
+    # Extract the year, day, and month
+    year = dt_object.strftime('%Y') 
+    day = dt_object.strftime('%d')   
+    month = get_month_number(dt_object.strftime('%b'))
 
-    text_for_embedding = f"{tweet['full_text']}, media_type:{media_type}, language:{tweet['lang']}"
+    text_for_embedding = f"{tweet['full_text']}, language:{tweet['lang']}".lower()
 
     pattern = r'https?://t\.co/[a-zA-Z0-9]+'  # Adjust the pattern if URLs vary
     # Replace found URLs with an empty string
     text_for_embedding = re.sub(pattern, '', text_for_embedding)
+
+    media_bool = is_media_present(tweet)
 
     # entire tweet as metadata cause size is less
     metadata = tweet
@@ -52,7 +56,8 @@ def format_tweet(tweet):
         "text": text_for_embedding,
         "metadata": json.dumps(metadata),  # Convert metadata dictionary to string to store in CSV
         "year": year,
-        "month": month
+        "month": month,
+        "media_present": media_bool
     }
 
 
