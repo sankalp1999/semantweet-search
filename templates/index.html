@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Old-School Internet Search</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
     <style>
         #date-range-container {
             display: none;
@@ -29,6 +30,29 @@
 
                 <!-- Optional To Month Input -->
                 <input type="text" name="month_to" placeholder="Month To (e.g., Dec)" pattern="[A-Za-z]{3}" title="Three letter month abbreviation">
+                
+                <div class="media-only-container">
+                    <label for="media-only">Media Only:</label>
+                    <input type="checkbox" id="media-only" name="media_only" value="yes">
+                    <span>Yes</span>
+                </div>
+
+                <div class="link-only-container">
+                    <label for="link_only">Link Only:</label>
+                    <input type="checkbox" id="link_only" name="link_only" value="yes">
+                    <span>Yes</span>
+                </div>
+
+                <div class="retweets-container">
+                    <label for="retweets">Minimum Retweets:</label>
+                    <input type="number" id="retweets" name="retweets" min="0" step="1">
+                </div>
+                
+                <div class="likes-container">
+                    <label for="likes">Minimum Likes:</label>
+                    <input type="number" id="likes" name="likes" min="0" step="1">
+                </div>
+                
 
             </div>
         </form>
@@ -50,6 +74,18 @@
                     <!-- If only one image, display it in its original aspect ratio -->
                     <img src="{{ result.media_urls[0] }}" alt="Tweet Image" class="single-tweet-image">
                 {% endif %}
+
+                {% if result.url_list %}
+                    <div class="tweet-link">
+                        <a href="{{ result.url_list[0] }}" target="_blank">{{ result.url_list[0] }}</a>
+                    </div>
+                {% endif %}
+                
+                <!-- Display likes and retweet count -->
+                <div class="tweet-stats">
+                    <span class="likes-count">Likes: {{ result.likes }}</span>
+                    <span class="retweet-count">Retweets: {{ result.retweets }}</span>
+                </div>
             </div>
         </a>
 
