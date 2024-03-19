@@ -1,19 +1,18 @@
 import pandas as pd
 import os
-import numpy as np
-
-df = pd.read_csv('formatted_tweets_v3.csv')
-model = "text-embedding-3-small"
-print(df.iloc[0])
-
-
-import os
 from openai import OpenAI
+from pathlib import Path
+
+# path of the script that is running
+root_project_directory = Path(__file__).absolute().resolve()
+
+df = pd.read_csv(os.path.join(root_project_directory, 'processed', 'formatted_tweets_v3.csv'))
+model = "text-embedding-3-small"
 
 # Set up your OpenAI client
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
-def get_embeddings(texts, model="text-embedding-3-small"):
+def get_embeddings(texts, model=model):
     # Replace newlines in all texts and trim extra whitespace
     cleaned_texts = [text.replace("\n", " ").strip() for text in texts]
     # Create embeddings in batch
@@ -30,7 +29,7 @@ def get_embeddings(texts, model="text-embedding-3-small"):
     embeddings = [item.embedding for item in response.data]  # Extract embeddings
     return embeddings
 
-batch_size = 32  # Set your batch size
+batch_size = 32  # # 32 * 200 = 6400 < 8191 tokens (embedding size)
 df['embeddings'] = [None] * len(df)
 
 # Process in batches
@@ -42,6 +41,4 @@ for i in range(0, len(df), batch_size):
         df.at[i+j, 'embeddings'] = embedding
 
 
-
-df.to_csv("openai_embedding_v1.csv")
-
+df.to_csv('processed_directory/embeddings/openai_embedding_async_v1.csv')

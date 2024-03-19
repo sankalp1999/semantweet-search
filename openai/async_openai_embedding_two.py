@@ -1,16 +1,18 @@
 import pandas as pd
 import os
-import numpy as np
 import asyncio
 from openai import AsyncOpenAI
+from pathlib import Path
 
-df = pd.read_csv('formatted_tweets_v3.csv')
-model = "text-embedding-3-small"
-print(df.iloc[0])
+# path of the script that is running
+
+df = pd.read_csv('processed/formatted_tweets_v3.csv')
+print("worked")
+model = "text-embedding-3-small" # can try with large
 
 client = AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
-async def get_embeddings(texts, model="text-embedding-3-small"):
+async def get_embeddings(texts, model=model):
     # Clean up each text entry
     texts = [text.replace("\n", " ") for text in texts]
     # Make the asynchronous API call
@@ -34,13 +36,12 @@ async def main(df, batch_size):
     await asyncio.gather(*tasks)
 
 # Set your batch size
-batch_size = 32
+batch_size = 32 # 32 * 200 = 6400 < 8191 tokens (embedding size)
+
 df['embeddings'] = [None] * len(df)
 
 # Run the main function with asyncio
 asyncio.run(main(df, batch_size))
 
-
-
-df.to_csv("openai_embedding_async_v1.csv")
+df.to_csv('processed/embedding/openai_embedding_async_v1.csv')
 

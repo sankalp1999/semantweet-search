@@ -3,3 +3,4 @@ venv
 twitter-archive/
 *.csv
 data/
+.ruff_cache

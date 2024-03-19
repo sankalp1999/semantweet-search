@@ -4,13 +4,14 @@ import json
 import re
 import calendar
 import datetime
+
 # Initialize the Flask application
 app = Flask(__name__)
 
 # Initialize the model and database connection
 # model = SentenceTransformer('all-MiniLM-L6-v2')
 db = lancedb.connect("data/openai_db")
-table = db.open_table("openai_embedding_table_1")
+table = db.open_table("new_table")
 
 
 def get_handle(file_path):
@@ -21,12 +22,11 @@ def get_handle(file_path):
         username = data[0]['account']['username']
         return username
 
-# Specify the path to your 'account.js' file
+# Specify the path to your 'account.js' file 
 
 file_path = 'twitter-archive/data/account.js'
 username = get_handle(file_path)
 print(f"Username: {username}")
-
 
 
 def get_month_number(month_name):
@@ -38,7 +38,7 @@ def get_month_number(month_name):
             return None
     return None
 
-def create_query(year_from, month_from, year_to, month_to):
+def create_query(year_from, month_from, year_to, month_to, media_only, likes_greater_than, likes_less_than, retweets_greater_than, retweets_less_than, link_only):
     # Convert month abbreviations to numbers
     month_from_number = get_month_number(month_from)
     month_to_number = get_month_number(month_to)
@@ -54,17 +54,69 @@ def create_query(year_from, month_from, year_to, month_to):
     if month_to_number:
         query_parts.append(f"month <= {month_to_number}")
     
+    if media_only:
+        query_parts.append(f"media_present = {1}")
+
+    if link_only:
+        query_parts.append(f"link_present = {1}")
+
+    if likes_greater_than:
+        query_parts.append(f"likes >= {likes_greater_than}")
+
+    if likes_less_than:
+        query_parts.append(f"likes <= {likes_less_than}")
+
+    if retweets_greater_than:
+        query_parts.append(f"retweets >= {retweets_greater_than}")
+
+    if retweets_less_than:
+        query_parts.append(f"retweets <= {retweets_less_than}")
+    
     return " and ".join(query_parts)
 
 
-def parse_tweets(metadata_list):
+def is_twitter_url(url):
+    # filtering out quote tweets
+    twitter_domains = [
+        'https://twitter.com',
+        'http://twitter.com',
+        'https://t.co',
+        'http://t.co',
+        'https://pbs.twimg.com',
+        'https://video.twimg.com',
+        'https://x.com',
+        'http://x.com'
+    ]
+    return any(url.startswith(domain) for domain in twitter_domains)
+
+def get_non_twitter_url(tweet):
+    entities = tweet.get('entities')
+    url_list = []
+    if entities:
+        urls = entities.get('urls')
+        if urls:
+            for url in urls:
+                expanded_url = url.get('expanded_url')
+                if expanded_url and not is_twitter_url(expanded_url):
+                    url_list.append(expanded_url)
+    return url_list
+
+def parse_tweets(metadata_list, link_only):
     parsed_tweets = []
     for json_str in metadata_list:
         try:
             tweet = json.loads(json_str)  # Assuming json_str is a JSON string of the tweet
+            likes = tweet.get('favorite_count')
+            retweets = tweet.get('retweet_count')
             
             # get the tweet id to form url
             tweet_id = tweet.get('id_str', 'No ID available')
+
+            url_list = []
+            if(link_only):
+                url_list = get_non_twitter_url(tweet)
+
+            print(url_list)
             
             # Parse the timestamp string into a datetime object
             dt_object = datetime.datetime.strptime(tweet['created_at'], '%a %b %d %H:%M:%S %z %Y')
@@ -117,7 +169,10 @@ def parse_tweets(metadata_list):
                 'text': full_text,
                 'media_urls': media_urls,
                 'image_ids': image_ids,
-                'handle': username_handle
+                'handle': username_handle,
+                'url_list': url_list,
+                'likes': likes,
+                'retweets': retweets
             })
         
         except json.JSONDecodeError:
@@ -133,27 +188,44 @@ def index():
     results = []
     if request.method == 'POST':
     
-        query = request.form.get('search')
+        search_query = request.form.get('search')
 
         year_from = request.form.get('year_from', '2006')
         month_from = request.form.get('month_from', 'Jan')
         year_to = request.form.get('year_to', '2024')
         month_to = request.form.get('month_to', 'Dec')
+        likes_greater_than = request.form.get('likes_greater_than')
+        likes_less_than = request.form.get('likes_less_than')
+        retweets_greater_than = request.form.get('retweets_greater_than')
+        retweets_less_than = request.form.get('retweets_less_than')
 
         # Convert year_from and year_to to integers if they are not None
         year_from = int(year_from) if year_from else 2006
         year_to = int(year_to) if year_to else 2024
         
-        date_query = create_query(year_from, month_from, year_to, month_to)
-        print(date_query)
-        docs = table.search(query).where(date_query, prefilter=True).limit(10).to_pandas()
+
+        media_only = 'yes' == request.form.get('media_only')
+
+        link_only = request.form.get('link_only')
+        print(link_only)
+
+        query = create_query(year_from, month_from, year_to, month_to, media_only, likes_greater_than, likes_less_than, retweets_greater_than, retweets_less_than, link_only)
+        
+        print("query: ", query)
+
+        if len(search_query) > 0:
+            docs = table.search(search_query).where(query, prefilter=True).limit(10).to_pandas()
+        else:
+            print("empty search query")
+            docs = table.search().where(query).limit(100).to_pandas()
       
         metadata_list = docs['metadata'].tolist()
 
-        tweets = parse_tweets(metadata_list)
+        tweets = parse_tweets(metadata_list, link_only)
 
         results = tweets
     return render_template('index.html', results=results)
 
 if __name__ == '__main__':
     app.run(debug=True)
+    # app.run(host='0.0.0.0')

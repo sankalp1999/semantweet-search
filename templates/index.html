@@ -2,92 +2,418 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Old-School Internet Search</title>
+    <title>Tweet Search</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
-        #date-range-container {
-            display: none;
-        }
+
+body {
+    background-image: url('static/anya_glass.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+    background-size: cover;
+    font-family: Arial, Helvetica, sans-serif
+}
+
+.search-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 0;
+}
+
+#more-options-button {
+    background-color: #ef9286;
+    color: white;
+}
+
+.form-flex-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.search-input-container {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    padding: 15px 25px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid #ddd;
+    border-radius: 30px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.search-input-container input[type="text"] {
+    flex: 1;
+    padding: 12px;
+    font-size: 20px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    border: none;
+    outline: none;
+    background-color: transparent;
+}
+
+.search-input-container button {
+    padding: 12px 25px;
+    font-size: 18px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    background-color: transparent;
+    color: #4285f4;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.search-input-container button:hover {
+    color: #3367d6;
+}
+
+.search-button {
+    padding: 15px 30px;
+    font-size: 20px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    background-color: #ef9286;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+}
+
+.search-button:hover {
+    background-color: #f27261;
+}
+
+#date-range-container {
+    display: none;
+    margin-top: 40px;
+    padding: 25px;
+}
+
+/* ... (rest of the CSS code for the date range container remains the same) ... */
+
+.input-group-row {
+    border-radius: 5px;
+    color: white;
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.input-group {
+    flex: 1;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.input-group input[type="number"],
+.input-group input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: border-color 0.3s ease;
+}
+
+.input-group input[type="number"]:focus,
+.input-group input[type="text"]:focus {
+    outline: none;
+    border-color: #4285f4;
+}
+
+.checkbox-group-row {
+    display: flex;
+    justify-content: flex-start;
+    gap: 15px;
+    margin-bottom: 15px;
+    align-items: center;
+    margin-left: calc(4%);
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    user-select: none;
+    color: grey;
+}
+
+.checkbox-container input[type="checkbox"] {
+    display: none;
+}
+
+.checkbox-container .checkmark {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-color: #eeeeee;
+    border-radius: 3px;
+    margin-right: 8px;
+    position: relative;
+    transition: background-color 0.3s ease;
+}
+
+.checkbox-container input[type="checkbox"]:checked + .checkmark {
+    background-color: #4285f4;
+}
+
+.checkbox-container input[type="checkbox"]:checked + .checkmark:after {
+    content: "\2713";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 14px;
+}
+
+.input-group input[type="number"] {
+    width: 80%;
+    padding: 10px;
+    font-size: 16px;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+.input-group input[type="text"] {
+    width: 80%;
+    padding: 10px;
+    font-size: 16px;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.tweet-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.tweet-content {
+    margin-bottom: 15px;
+}
+
+.tweet-content p {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.tweet-images-container {
+    margin-top: 10px;
+}
+
+.grid-layout {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-gap: 10px;
+}
+
+.grid-layout-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px;
+}
+
+.grid-layout-3 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-gap: 10px;
+}
+
+.grid-layout-3 .tweet-image-wrapper:first-child {
+    grid-row: 1 / span 2;
+}
+
+.grid-layout-4 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-gap: 10px;
+}
+
+.tweet-image-wrapper {
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.tweet-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+.tweet-image-placeholder {
+    background-color: #f5f8fa;
+    border-radius: 4px;
+}
+
+.single-tweet-image {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.tweet-external-link {
+    margin-top: 10px;
+}
+
+.tweet-external-link a {
+    color: #1da1f2;
+    text-decoration: none;
+}
+
+.tweet-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #e6ecf0;
+    padding-top: 15px;
+}
+
+.tweet-stats {
+    display: flex;
+    align-items: center;
+}
+
+.likes-count,
+.retweet-count {
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+    color: #657786;
+}
+
+.likes-count i,
+.retweet-count i {
+    margin-right: 5px;
+}
+
+.tweet-actions {
+    display: flex;
+    align-items: center;
+}
+
+.tweet-link {
+    display: flex;
+    align-items: center;
+    color: #1da1f2;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.tweet-link i {
+    margin-right: 5px;
+}
+
+
     </style>
 </head>
 <body>
     <div class="search-container">
         <form action="/" method="post">
             <div class="form-flex-container">
-                <input type="text" name="search" placeholder="Type your query..." autofocus>
-                <button type="button" id="more-options-button">More Options</button>
-                <button type="submit">Search</button>
+                <div class="search-input-container">
+                    <input type="text" name="search" placeholder="Search" autofocus>
+                    <button type="button" id="more-options-button">Options</button>
+                </div>
+                <button type="submit" class="search-button">Search</button>
             </div>
-            <!-- Hidden Date Range Container -->
             <div id="date-range-container">
-                <!-- Optional From Year Input -->
-                <input type="number" name="year_from" placeholder="Year From (optional)" min="2006" max="2025">
-                <!-- Optional To Year Input -->
-                <input type="number" name="year_to" placeholder="Year To (optional)" min="2006" max="2025">
-                <!-- Optional From Month Input -->
-                <input type="text" name="month_from" placeholder="Month From (e.g., Jan)" pattern="[A-Za-z]{3}" title="Three letter month abbreviation">
-
-                <!-- Optional To Month Input -->
-                <input type="text" name="month_to" placeholder="Month To (e.g., Dec)" pattern="[A-Za-z]{3}" title="Three letter month abbreviation">
+                <div class="checkbox-group-row">
+                    <label class="checkbox-container">
+                        <input type="checkbox" name="media_only" value="yes">
+                        <span class="checkmark"></span>
+                        Media Only
+                    </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" name="link_only" value="yes">
+                        <span class="checkmark"></span>
+                        Link Only
+                    </label>
+                </div>
+                <div class="input-group-row">
+                    <div class="input-group">
+                        <input type="number" id="year_from" name="year_from" min="2006" max="2025" placeholder="Year from (e.g. 2006)">
+                    </div>
+                    <div class="input-group">
+                        <input type="number" id="year_to" name="year_to" min="2006" max="2025" placeholder="Year to (e.g. 2024)">
+                    </div>
+                </div>
+                <div class="input-group-row">
+                    <div class="input-group">
+                        <input type="text" id="month_from" name="month_from" pattern="[A-Za-z]{3}" title="Three letter month abbreviation" placeholder="Month from (e.g. Jan)">
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="month_to" name="month_to" pattern="[A-Za-z]{3}" title="Three letter month abbreviation" placeholder="Month to (e.g. Dec)">
+                    </div>
+                </div>
+                <div class="input-group-row">
+                    <div class="input-group">
+                        <input type="number" id="likes_greater_than" name="likes_greater_than" min="0" placeholder="Likes >=">
+                    </div>
+                    <div class="input-group">
+                        <input type="number" id="likes_less_than" name="likes_less_than" min="0" placeholder="Likes <=">
+                    </div>
+                </div>
+                <div class="input-group-row">
+                    <div class="input-group">
+                        <input type="number" id="retweets_greater_than" name="retweets_greater_than" min="0" placeholder="Retweets >=">
+                    </div>
+                    <div class="input-group">
+                        <input type="number" id="retweets_less_than" name="retweets_less_than" min="0" placeholder="Retweets <=">
+                    </div>
+                </div>
                 
-                <div class="media-only-container">
-                    <label for="media-only">Media Only:</label>
-                    <input type="checkbox" id="media-only" name="media_only" value="yes">
-                    <span>Yes</span>
-                </div>
-
-                <div class="link-only-container">
-                    <label for="link_only">Link Only:</label>
-                    <input type="checkbox" id="link_only" name="link_only" value="yes">
-                    <span>Yes</span>
-                </div>
-
-                <div class="retweets-container">
-                    <label for="retweets">Minimum Retweets:</label>
-                    <input type="number" id="retweets" name="retweets" min="0" step="1">
-                </div>
-                
-                <div class="likes-container">
-                    <label for="likes">Minimum Likes:</label>
-                    <input type="number" id="likes" name="likes" min="0" step="1">
-                </div>
-                
-
             </div>
         </form>
     </div>
     <div id="resultsContainer">
         {% for result in results %}
-        <a href="https://{{ result.url }}" target="_blank" class="tweet-card">
+        <div class="tweet-card">
             <div class="tweet-content">
                 <p>{{ result.text }}</p>
-                <!-- Check if there are multiple images -->
-                {% if result.media_urls and result.media_urls|length > 1 %}
-                    <div class="tweet-images-container">
-                        <!-- Display each image in a square -->
+                {% if result.media_urls %}
+                    <div class="tweet-images-container {% if result.media_urls|length > 1 %}grid-layout-{{ result.media_urls|length }}{% endif %}">
                         {% for image_url in result.media_urls %}
-                            <img src="{{ image_url }}" alt="Tweet Image" class="tweet-image">
+                            <div class="tweet-image-wrapper">
+                                <img src="{{ image_url }}" alt="Tweet Image" class="tweet-image">
+                            </div>
                         {% endfor %}
                     </div>
-                {% elif result.media_urls %}
-                    <!-- If only one image, display it in its original aspect ratio -->
-                    <img src="{{ result.media_urls[0] }}" alt="Tweet Image" class="single-tweet-image">
                 {% endif %}
-
+        
                 {% if result.url_list %}
-                    <div class="tweet-link">
-                        <a href="{{ result.url_list[0] }}" target="_blank">{{ result.url_list[0] }}</a>
+                    <div class="tweet-external-link">
+                        <a href="{{ result.url_list[0] }}" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> {{ result.url_list[0] }}
+                        </a>
                     </div>
                 {% endif %}
-                
-                <!-- Display likes and retweet count -->
+            </div>
+            <div class="tweet-footer">
                 <div class="tweet-stats">
-                    <span class="likes-count">Likes: {{ result.likes }}</span>
-                    <span class="retweet-count">Retweets: {{ result.retweets }}</span>
+                    <span class="likes-count">
+                        <i class="fas fa-heart"></i> {{ result.likes }}
+                    </span>
+                    <span class="retweet-count">
+                        <i class="fas fa-retweet"></i> {{ result.retweets }}
+                    </span>
+                </div>
+                <div class="tweet-actions">
+                    <a href="https://{{ result.url }}" target="_blank" class="tweet-link">
+                        <i class="fab fa-twitter"></i> View on Twitter
+                    </a>
                 </div>
             </div>
-        </a>
+        </div>
 
         {% endfor %}
     </div>

@@ -1,0 +1,9 @@
+Flask==3.0.2
+lancedb==0.5.7
+numpy==1.26.4
+pandas==2.2.1
+scikit_learn==1.4.1.post1
+sentence_transformers==2.4.0
+openai
+tantivy
+ruff

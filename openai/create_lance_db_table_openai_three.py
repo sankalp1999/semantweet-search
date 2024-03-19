@@ -4,6 +4,11 @@ from lancedb.pydantic import LanceModel, Vector
 import pandas as pd
 import numpy as np
 
+csv_file_path = 'processed/embedding/openai_embedding_async_v1.csv'
+MODEL_NAME = "text-embedding-3-small" 
+
+registry = EmbeddingFunctionRegistry.get_instance()
+model = registry.get("openai").create(name=MODEL_NAME)
 
 class Schema(LanceModel):
     embeddings: Vector(model.ndims()) = model.VectorField()
@@ -12,21 +17,21 @@ class Schema(LanceModel):
     tweet_id: str
     year: int
     month: int
+    likes: int
+    retweets: int
+    link_present: int
+    media_present: int
 
-csv_file_path = 'openai_embedding_async_v1.csv'
-MODEL_NAME = "text-embedding-3-small" 
 
-registry = EmbeddingFunctionRegistry.get_instance()
-model = registry.get("openai").create(name=MODEL_NAME)
-
-uri = "../data/openai_db" # data directory is outside
+uri = "data/openai_db" # data directory is outside
 db = lancedb.connect(uri)
 
 df = pd.read_csv(csv_file_path)
 df['embeddings'] = df['embeddings'].apply(lambda x: np.fromstring(x.strip("[]"), sep=','))
 
-tbl = db.create_table("openai_embedding_table_1", data=df, schema=Schema,mode="overwrite" )
+table = db.create_table("new_table", data=df, schema=Schema,mode="overwrite" )
 
 # TODO: Can enable hybrid search later, let's try to improve existing first
+table.create_fts_index("text", replace=True)
 
 print("Table Created.")
