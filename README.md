@@ -2,6 +2,16 @@
 
 SemanTweet Search allows you to search your Twitter archive using semantic similarity. It preprocesses your tweets, generates embeddings using OpenAI's small/large embedding model, stores the data and embeddings in a LanceDB vector db, and provides a web interface to search and view the results.
 
+You can do semantic search post filtering by time, likes, retweets,
+media only or link only tweets too. 
+
+Uses:
+- twitter archive for data
+- semantic search using openai embeddings
+- lance db for vector search and sql operations
+- flask for server
+
+
 ## Prerequisites
 
 - Python 3.x
