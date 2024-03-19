@@ -80,6 +80,20 @@ Enjoy!
 
 ## OpenAI Embedding Flow
 
+```mermaid
+graph TD
+    A[Twitter Archive Data] --> B[preprocess_tweets_one.py]
+    B --> C[Preprocessed Tweets CSV]
+    C --> D[async_openai_embedding_two.py]
+    D --> E[Embeddings CSV]
+    E --> F[create_lance_db_table_openai_three.py]
+    F --> G[LanceDB Database]
+    G --> H[Web Interface]
+    H --> I[Search Tweets]
+    I --> J[View Results]
+```
+
+
 The OpenAI embedding flow consists of the following steps:
 
 1. `preprocess_tweets_one.py`: This script preprocesses the tweets from the Twitter archive, extracting relevant information and saving it to a CSV file.
