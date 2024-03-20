@@ -8,7 +8,7 @@ csv_file_path = 'processed/embeddings/openai_embeddings_async_v1.csv'
 MODEL_NAME = "text-embedding-3-large" 
 
 registry = EmbeddingFunctionRegistry.get_instance()
-model = registry.get("openai").create(name=MODEL_NAME)
+model = registry.get("openai").create(name=MODEL_NAME, max_retries = 2)
 
 class Schema(LanceModel):
     embeddings: Vector(model.ndims()) = model.VectorField()
