@@ -6,7 +6,7 @@ from pathlib import Path
 # path of the script that is running
 root_project_directory = Path(__file__).absolute().resolve()
 
-df = pd.read_csv(os.path.join(root_project_directory, 'processed', 'formatted_tweets_v3.csv'))
+df = pd.read_csv(os.path.join(root_project_directory, 'processed', 'formatted_tweets.csv'))
 model = "text-embedding-3-small"
 
 # Set up your OpenAI client

@@ -6,7 +6,7 @@ from pathlib import Path
 
 # path of the script that is running
 
-df = pd.read_csv('processed/formatted_tweets_v3.csv')
+df = pd.read_csv('processed/formatted_tweets.csv')
 print("worked")
 model = "text-embedding-3-large" # can try with large
 
