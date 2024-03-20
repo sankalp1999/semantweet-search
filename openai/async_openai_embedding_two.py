@@ -45,3 +45,4 @@ asyncio.run(main(df, batch_size))
 
 df.to_csv('processed/embeddings/openai_embeddings_async_v1.csv')
 
+print("embeddings successfully saved dear anon")
