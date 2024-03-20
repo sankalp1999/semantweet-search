@@ -4,8 +4,8 @@ from lancedb.pydantic import LanceModel, Vector
 import pandas as pd
 import numpy as np
 
-csv_file_path = 'processed/embedding/openai_embedding_async_v1.csv'
-MODEL_NAME = "text-embedding-3-small" 
+csv_file_path = 'processed/embeddings/openai_embeddings_async_v1.csv'
+MODEL_NAME = "text-embedding-3-large" 
 
 registry = EmbeddingFunctionRegistry.get_instance()
 model = registry.get("openai").create(name=MODEL_NAME)
