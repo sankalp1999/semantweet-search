@@ -106,7 +106,7 @@ df = pd.DataFrame(formatted_tweets)
 
 # Specify CSV file path
 
-csv_file_path = os.path.join(project_root_directory, 'processed', 'formatted_tweets_v3.csv')
+csv_file_path = os.path.join(project_root_directory, 'processed', 'formatted_tweets.csv')
 
 # Save to CSV
 df.to_csv(csv_file_path, index=False)
