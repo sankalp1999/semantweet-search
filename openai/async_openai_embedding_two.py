@@ -8,7 +8,7 @@ from pathlib import Path
 
 df = pd.read_csv('processed/formatted_tweets_v3.csv')
 print("worked")
-model = "text-embedding-3-small" # can try with large
+model = "text-embedding-3-large" # can try with large
 
 client = AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
@@ -43,5 +43,5 @@ df['embeddings'] = [None] * len(df)
 # Run the main function with asyncio
 asyncio.run(main(df, batch_size))
 
-df.to_csv('processed/embedding/openai_embedding_async_v1.csv')
+df.to_csv('processed/embeddings/openai_embeddings_async_v1.csv')
 
