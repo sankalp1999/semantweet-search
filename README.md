@@ -11,6 +11,7 @@ Uses:
 - lance db for vector search and sql operations
 - flask for server
 
+**Currently, only supports openai embeddings.**
 
 ## Prerequisites
 
@@ -106,7 +107,7 @@ The `run_scripts.sh` script automates the execution of these steps in the correc
 
 ## Additional Notes
 
-- The project uses the `text-embedding-3-small` model by default. You can change the model by modifying the `MODEL_NAME` variable in the relevant scripts.
+- The project uses the `text-embedding-3-large` model by default. You can change the model by modifying the `MODEL_NAME` variable in the relevant scripts.
 
 - The batch size for generating embeddings is set to 32 to stay within the token limit. Adjust the batch size if needed.
 
