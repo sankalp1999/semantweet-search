@@ -17,3 +17,4 @@ echo "Creating Lance DB table..."
 python openai/create_lance_db_table_openai_three.py
 
 echo "Completed."
+echo "Please do python app.py now"
