@@ -11,7 +11,7 @@ app = Flask(__name__)
 # Initialize the model and database connection
 # model = SentenceTransformer('all-MiniLM-L6-v2')
 db = lancedb.connect("data/openai_db")
-table = db.open_table("new_table")
+table = db.open_table("openai_table")
 
 
 def get_handle(file_path):
@@ -214,15 +214,16 @@ def index():
         print("query: ", query)
 
         if len(search_query) > 0:
-            docs = table.search(search_query).where(query, prefilter=True).limit(10).to_pandas()
+            docs = table.search(search_query).where(query, prefilter=True).limit(50).to_pandas()
         else:
             print("empty search query")
             docs = table.search().where(query).limit(100).to_pandas()
       
         metadata_list = docs['metadata'].tolist()
 
-        tweets = parse_tweets(metadata_list, link_only)
 
+        tweets = parse_tweets(metadata_list, link_only)
+        print(len(tweets))
         results = tweets
     return render_template('index.html', results=results)
 

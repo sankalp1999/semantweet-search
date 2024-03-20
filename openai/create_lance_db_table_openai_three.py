@@ -29,7 +29,7 @@ db = lancedb.connect(uri)
 df = pd.read_csv(csv_file_path)
 df['embeddings'] = df['embeddings'].apply(lambda x: np.fromstring(x.strip("[]"), sep=','))
 
-table = db.create_table("new_table", data=df, schema=Schema,mode="overwrite" )
+table = db.create_table("openai_table", data=df, schema=Schema,mode="overwrite" )
 
 # TODO: Can enable hybrid search later, let's try to improve existing first
 table.create_fts_index("text", replace=True)
