@@ -213,7 +213,7 @@ def index():
         print("query: ", query)
 
         if len(search_query) > 0:
-            docs = table.search(search_query).where(query, prefilter=True).limit(50).to_pandas()
+            docs = table.search(search_query, query_type="hybrid").where(query, prefilter=True).limit(50).to_pandas()
         else:
             print("empty search query")
             docs = table.search().where(query).limit(100).to_pandas()
