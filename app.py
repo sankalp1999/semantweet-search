@@ -178,8 +178,7 @@ def parse_tweets(metadata_list, link_only):
         except json.JSONDecodeError:
             print("Error decoding JSON")
         except KeyError as e:
-            print(f"Key error in extracting data: {e}")
-    
+            print(f"Key error in extracting data: {e}")    
     return parsed_tweets
 
 
@@ -223,6 +222,16 @@ def index():
 
 
         tweets = parse_tweets(metadata_list, link_only)
+
+        def calculate_sort_score(likes, retweets):
+            likes = likes or 0
+            retweets = retweets or 0
+            return likes + retweets
+
+        # if no search query, just want to see by likes
+        if len(search_query) == 0 and (likes_greater_than or likes_less_than or retweets_greater_than or retweets_less_than):
+            tweets.sort(key=lambda x: calculate_sort_score(x['likes'], x['retweets']), reverse=True)
+
         print(len(tweets))
         results = tweets
     return render_template('index.html', results=results)
