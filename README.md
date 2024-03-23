@@ -27,6 +27,10 @@ Uses:
    git clone https://github.com/sankalp1999/semantweet-search.git
    ```
 
+   ```
+   cd semantweet-search/
+   ```
+
 2. Download your Twitter archive (takes 2 days to be available) and extract it. Put the extracted folder at the root of this project and rename it to `twitter-archive`.
 
 3. Create a virtual environment:
@@ -35,6 +39,7 @@ Uses:
    python3 -m venv venv
    ```
 
+   Make sure you do this at the root of project.
 4. Activate the virtual environment:
 
    - For Unix/Linux:
