@@ -9,7 +9,7 @@ registry = EmbeddingFunctionRegistry.get_instance()
 model = registry.get("sentence-transformers").create(device="cpu") # Try without cpu as well
 
 class Schema(LanceModel):
-    embeddings: Vector(func.ndims()) = model.VectorField()
+    embeddings: Vector(model.ndims()) = model.VectorField()
     text: str = model.SourceField()
     metadata: str
     tweet_id: str
@@ -23,7 +23,7 @@ class Schema(LanceModel):
 csv_file_path = 'processed/embeddings/sentence_embeddings.csv'
 
 
-uri = "../data/sentence_db"
+uri = "data/sentence_db"
 db = lancedb.connect(uri)
 
 df = pd.read_csv(csv_file_path)
