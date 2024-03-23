@@ -94,7 +94,7 @@ You can additionally use/edit `projector.py` and [tensorflow projector ](https:/
 
 Enjoy!
 
-## OpenAI Embedding Flow
+## Flow of the program
 
 ```mermaid
 graph TD
@@ -129,3 +129,7 @@ The `run_scripts.sh` script automates the execution of these steps in the correc
 - The LanceDB database is stored in the `data/openai_db` directory.
 
 - The project also includes a synchronous version of the OpenAI embedding generation script (`create_openai_embedding_sync_two.py`), which can be used as an alternative to the asynchronous version.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
