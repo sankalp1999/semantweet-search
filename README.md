@@ -1,17 +1,23 @@
 # SemanTweet Search
 
-SemanTweet Search allows you to search your Twitter archive using semantic similarity. It preprocesses your tweets, generates embeddings using OpenAI's small/large embedding model, stores the data and embeddings in a LanceDB vector db, and provides a web interface to search and view the results.
+SemanTweet Search allows you to search over all your tweets from the Twitter archive using semantic similarity. A demo is available [here](https://x.com/dejavucoder/status/1770159894143946966?s=20).
 
-You can do semantic search post filtering by time, likes, retweets,
-media only or link only tweets too. 
+It preprocesses your tweets, generates embeddings using **OpenAI's small/large embedding model**, stores the data and embeddings in LanceDB vector db, and provides a web interface to search and view the results.
 
-Uses:
-- twitter archive for data
-- semantic search using openai embeddings
-- lance db for vector search and sql operations
-- flask for server
+You can do semantic search post **pre-filtering by time, likes, retweets, media only or link only** tweets too. 
 
-**Currently, only supports openai embeddings.**
+Pre-filtering by sql operations helps not only filter but also reduce the vector searchspace thus speeding up the search.
+
+You can additionally use/edit `projector.py` and [tensorflow projector ](https://projector.tensorflow.org/)to get a visualization of your tweets using t-sne algorithm as shown [here](https://x.com/dejavucoder/status/1771510768053186910?s=20)
+
+
+**Technologies Used:**
+- Twitter archive for data
+- OpenAI embeddings for semantic search
+- [Lancedb](https://lancedb.com/) for vector search and sql operations
+- Hybrid search provided by Lancedb combining BM25 + embedding search
+- Flask for server
+
 
 ## Prerequisites
 
@@ -31,7 +37,11 @@ Uses:
    cd semantweet-search/
    ```
 
-2. Download your Twitter archive (takes 2 days to be available) and extract it. Put the extracted folder at the root of this project and rename it to `twitter-archive`.
+2. Download your Twitter archive (takes 2 days to be available)
+
+   Go to: `More (3 dot button) > Settings and Privacy > Your Account > Download an archive of your data`.
+
+   Extract it. Put the extracted folder at the root of this project and rename it to `twitter-archive`.
 
 3. Create a virtual environment:
 
