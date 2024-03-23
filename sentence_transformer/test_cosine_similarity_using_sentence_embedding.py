@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from sentence_transformers import SentenceTransformer
-
+from sklearn.metrics.pairwise import cosine_similarity
 # Load the CSV file
 csv_file_path = 'sentence_embedding_v2.csv'  # Update with your actual file path
 df = pd.read_csv(csv_file_path)
@@ -16,7 +16,7 @@ query_text = "Aug 15 2023"
 # Calculate the embedding for the query
 query_embedding = model.encode(query_text)
 
-from sklearn.metrics.pairwise import cosine_similarity
+
 
 # Convert list of embeddings in DataFrame to a 2D NumPy array
 embeddings_matrix = np.stack(df['embeddings'].values)
