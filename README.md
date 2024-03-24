@@ -6,10 +6,15 @@ It preprocesses your tweets, generates embeddings using **OpenAI's small/large e
 
 You can do semantic search post **pre-filtering by time, likes, retweets, media only or link only** tweets too. 
 
-Pre-filtering by sql operations helps not only filter but also reduce the vector searchspace thus speeding up the search.
+Pre-filtering by sql operations helps not only filter but also reduce the vector search space thus speeding up the search.
 
 You can additionally use/edit `projector.py` and [tensorflow projector ](https://projector.tensorflow.org/)to get a visualization of your tweets using t-sne algorithm as shown [here](https://x.com/dejavucoder/status/1771510768053186910?s=20)
 
+**UPDATE** (24/3/2024)
+Add support for CLIP based image searching on tweets_media folder. You can checkout the code in `app_image_search.py`.
+LancedDb makes it easy to handle the embedding stuff.
+
+WIP: adding bge-small-en-v1.5 support
 
 **Technologies Used:**
 - Twitter archive for data
@@ -67,6 +72,11 @@ You can additionally use/edit `projector.py` and [tensorflow projector ](https:/
    pip install -r requirements.txt
    ```
 
+   If you are going to try out image based search, please run below. I have not included this in requirements.txt as it downloads
+   as 620 MB model and not everyone would like to try.
+   ```
+   pip install open_clip_torch
+   ```
 6. Set up your OpenAI API key as an environment variable:
 
    ```
