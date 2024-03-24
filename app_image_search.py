@@ -6,13 +6,52 @@ from lancedb.pydantic import LanceModel, Vector
 from pathlib import Path
 from random import sample
 import pandas as pd
-from itertools import chain
+import os, re
 
 app = Flask(__name__)
 
 # Configure LanceDB and load the image search table
 registry = EmbeddingFunctionRegistry.get_instance()
 clip = registry.get("open-clip").create()
+
+
+def is_valid_file(file_path):
+    """
+    Check if a file is valid based on its extension and name.
+
+    Args:
+        file_path (str or pathlib.Path): The path to the file.
+
+    Returns:
+        bool: True if the file is valid, False otherwise.
+
+    Criteria for a valid file:
+    - The file must exist and be a file (not a directory).
+    - The file extension must be one of the supported image formats: '.jpg', '.jpeg', or '.png'.
+    - The file name must not contain any special characters: '#', '?', 'NUL', '\\', '/', ':', '*', '?', '"', '<', '>', '|'.
+
+    Example usage:
+        file_path = 'path/to/image.jpg'
+        if is_valid_file(file_path):
+            # Process the valid file
+        else:
+            # Skip the invalid file
+    """
+    if not os.path.isfile(file_path):
+        return False
+
+    _, ext = os.path.splitext(file_path)
+    if ext.lower() not in ['.jpg', '.jpeg', '.png']:
+        return False
+
+    file_name = os.path.basename(file_path)
+    special_chars_pattern = re.compile(r'[#?\\/:*?"<>|]')
+    if special_chars_pattern.search(file_name):
+        print("skipped", file_name)
+        return False
+
+    return True
+
 
 class Media(LanceModel):
     vector: Vector(clip.ndims()) = clip.VectorField()
@@ -27,11 +66,17 @@ if "media" in db:
     print('exists already')
     table = db["media"]
 else:
-    table = db.create_table("media", schema=Media, mode="overwrite")
-    # use a sampling of 1000 images
-    p = Path("twitter-archive/data/tweets_media").expanduser()
-    uris = [str(f.absolute()) for f in chain(p.glob("*.jpg"), p.glob("*.jpeg"), p.glob("*.png"))] 
-    table.add(pd.DataFrame({"image_uri": uris}))
+    try:
+        table = db.create_table("media", schema=Media, mode="overwrite")
+        # use a sampling of 1000 images
+        p = Path("twitter-archive/data/tweets_media").expanduser()
+        uris = [str(f.absolute()) for f in p.iterdir() if is_valid_file(f)]
+        table.add(pd.DataFrame({"image_uri": uris}))
+    except Exception as e:
+        if "media" in db:
+            db.drop_table("media")
+        raise e
+
 
 @app.route('/', methods=['POST', 'GET'])
 def image_search():
