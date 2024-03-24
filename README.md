@@ -72,8 +72,8 @@ WIP: adding bge-small-en-v1.5 support
    pip install -r requirements.txt
    ```
 
-   If you are going to try out image based search, please run below. I have not included this in requirements.txt as it downloads
-   as 620 MB model and not everyone would like to try.
+   If you want to try out image vector search, please run below command. I have not included this in requirements.txt as it downloads
+   a 620 MB model and not everyone would like to do that by default.
    ```
    pip install open_clip_torch
    ```
