@@ -83,7 +83,11 @@ WIP: adding bge-small-en-v1.5 support
    export OPENAI_API_KEY=your_api_key
    ```
 
-7. Choose the desired OpenAI embedding model (small or large) in the `openai/async_openai_embedding_two.py` file.
+7. By default, this repo uses openAI `text-embedding-3-large`
+
+   You can change it to `text-embedding-3-small`. Change required at two places. 
+- [openai/async_openai_embedding_two.py](openai/async_openai_embedding_two.py) file at line 11.
+- change the MODEL_NAME at [openai/create_lance_db_table_openai_three.py](openai/create_lance_db_table_openai_three.py) at line 8.
 
 8. Run the setup script:
 
@@ -132,7 +136,7 @@ The `run_scripts.sh` script automates the execution of these steps in the correc
 
 ## Additional Notes
 
-- The project uses the `text-embedding-3-large` model by default. You can change the model by modifying the `MODEL_NAME` variable in the relevant scripts.
+- The project uses the `text-embedding-3-large` model by default. You can change the model by modifying the `MODEL_NAME` variable 
 
 - The batch size for generating embeddings is set to 32 to stay within the token limit. Adjust the batch size if needed.
 
