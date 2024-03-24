@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Search</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .search-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 0;
+        }
+
+        .form-flex-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .search-input-container {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            padding: 15px 25px;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+        }
+
+        .search-input-container input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            font-size: 20px;
+            border: none;
+            outline: none;
+            background-color: transparent;
+        }
+
+        .search-input-container input[type="file"] {
+            display: none;
+        }
+
+        .search-button {
+            padding: 15px 30px;
+            font-size: 20px;
+            background-color: #ef9286;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-button:hover {
+            background-color: #f27261;
+        }
+
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-gap: 20px;
+            margin: 50px auto;
+            max-width: 1200px;
+        }
+
+        .gallery-item {
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+
+        .tweet-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .aspect-ratio {
+            aspect-ratio: 1 / 1; /* Adjust the aspect ratio as needed, e.g., 16 / 9 for a 16:9 ratio */
+        }
+
+        #image-preview-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #image-preview {
+            max-width: 300px;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="image-modal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modal-image">
+    </div>
+    <div class="search-container">
+        <form action="/" method="post" enctype="multipart/form-data">
+            <div class="form-flex-container">
+                <div class="search-input-container">
+                    <input type="text" name="search" placeholder="Search" autofocus>
+                    <input type="file" name="image" accept="image/*" style="display: none;" id="image-upload">
+                    <button type="button" id="image-upload-btn">Upload Image</button>
+                    <button type="button" id="more-options-button">Options</button>
+                </div>
+                <button type="submit" class="search-button">Search</button>
+            </div>
+        </form>
+    </div>
+    <div id="image-preview-container" style="display: none;">
+        <img id="image-preview" src="" alt="Uploaded Image Preview" class="tweet-image aspect-ratio">
+    </div>
+
+    {% if results %}
+        <div class="gallery-container">
+            {% for result in results %}
+                <div class="gallery-item">
+                    <img src="{{ url_for('serve_image', filename=result.image_uri.split('/')[-1]) }}" alt="Image" class="tweet-image aspect-ratio" onclick="openModal(this)">
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+
+    <script>
+
+    var modal = document.getElementById("image-modal");
+        var modalImage = document.getElementById("modal-image");
+        var closeBtn = document.getElementsByClassName("close")[0];
+
+        function openModal(img) {
+            modal.style.display = "block";
+            modalImage.src = img.src;
+        }
+
+    closeBtn.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+
+        document.getElementById('image-upload-btn').onclick = function() {
+        document.getElementById('image-upload').click();
+    };
+
+    document.getElementById('image-upload').onchange = function(event) {
+        var file = event.target.files[0];
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+            var imagePreview = document.getElementById('image-preview');
+            imagePreview.src = e.target.result;
+            document.getElementById('image-preview-container').style.display = 'block';
+        };
+
+        reader.readAsDataURL(file);
+    };
+    </script>
+</body>
+</html>
