@@ -11,8 +11,9 @@ Pre-filtering by sql operations helps not only filter but also reduce the vector
 You can additionally use/edit `projector.py` and [tensorflow projector ](https://projector.tensorflow.org/)to get a visualization of your tweets using t-sne algorithm as shown [here](https://x.com/dejavucoder/status/1771510768053186910?s=20)
 
 **UPDATE** (24/3/2024)
-Add support for CLIP based image searching on tweets_media folder. You can checkout the code in `app_image_search.py`.
-You do not require to run the setup bash scripts for this, it's a standalone program. 
+Add support for CLIP based image searching on tweets_media folder. You can checkout the code in `app_image_search.py` after installing requirements
+i.e step 6. You do not require to run the setup bash scripts for this, it's a standalone program. First run will take
+roughly 5-10 minutes as it creates the embeddings. Subsequent runs will be instant.
 
 WIP: adding bge-small-en-v1.5 support
 
