@@ -18,7 +18,7 @@ WIP: adding bge-small-en-v1.5 support
 
 **Technologies Used:**
 - Twitter archive for data
-- OpenAI embeddings for semantic search
+- OpenAI `text-embedding-3-large` embeddings by default for semantic search
 - [Lancedb](https://lancedb.com/) for vector search and sql operations
 - Hybrid search provided by Lancedb combining BM25 + embedding search
 - Flask for server
