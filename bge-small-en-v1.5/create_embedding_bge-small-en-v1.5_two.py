@@ -13,7 +13,7 @@ max_tokens = 500
 
 # Load the "all-MiniLM-L6-v2" model
 # Handles tokenization internally, no preprocessing required
-model = SentenceTransformer('all-MiniLM-L6-v2')
+model = SentenceTransformer('BAAI/bge-small-en-v1.5')
 
 # Function to generate embeddings and return them as a list
 def generate_embeddings(text):
