@@ -12,7 +12,7 @@ You can additionally use/edit `projector.py` and [tensorflow projector ](https:/
 
 **UPDATE** (24/3/2024)
 Add support for CLIP based image searching on tweets_media folder. You can checkout the code in `app_image_search.py`.
-LancedDb makes it easy to handle the embedding stuff.
+You do not require to run the setup bash scripts for this, it's a standalone program. 
 
 WIP: adding bge-small-en-v1.5 support
 
