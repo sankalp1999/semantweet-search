@@ -8,11 +8,12 @@ import datetime
 # Initialize the Flask application
 app = Flask(__name__)
 
-# Initialize the model and database connection
-# model = SentenceTransformer('all-MiniLM-L6-v2')
 db = lancedb.connect("data/openai_db")
 table = db.open_table("openai_table")
 
+# Uncomment below for sentence transformers
+# db = lancedb.connect("data/bge_embeddings")
+# table = db.open_table("bge_table")
 
 def get_handle(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
