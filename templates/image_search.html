@@ -2,15 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Image Search</title>
+    <title>Embeddit</title>
     <style>
         body {
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: rgb(250 216 216);
         }
 
         .search-container {
             max-width: 800px;
-            margin: 50px auto;
+            margin: 40px auto;
             padding: 0;
         }
 
@@ -27,7 +28,7 @@
             padding: 15px 25px;
             background-color: #f1f1f1;
             border: 1px solid #ddd;
-            border-radius: 30px;
+            border-radius: 20px;
         }
 
         .search-input-container input[type="text"] {
@@ -46,16 +47,28 @@
         .search-button {
             padding: 15px 30px;
             font-size: 20px;
-            background-color: #ef9286;
+            background-color: #f98f81;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 20px;
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
 
-        .search-button:hover {
-            background-color: #f27261;
+        .upload-button {
+            padding: 10px 10px;
+            font-size: 18px;
+            background-color: #f98f81;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-button:hover,
+        .upload-button:hover {
+            background-color: #f38273;
         }
 
         .gallery-container {
@@ -140,6 +153,7 @@
     </style>
 </head>
 <body>
+
     <div id="image-modal" class="modal">
         <span class="close">&times;</span>
         <img class="modal-content" id="modal-image">
@@ -149,9 +163,8 @@
             <div class="form-flex-container">
                 <div class="search-input-container">
                     <input type="text" name="search" placeholder="Search" autofocus>
-                    <input type="file" name="image" accept="image/*" style="display: none;" id="image-upload">
-                    <button type="button" id="image-upload-btn">Upload Image</button>
-                    <button type="button" id="more-options-button">Options</button>
+                    <input type="file" name="image" accept="image/*" id="image-upload">
+                    <label for="image-upload" class="upload-button">Upload Image</label>
                 </div>
                 <button type="submit" class="search-button">Search</button>
             </div>
@@ -173,8 +186,7 @@
     
 
     <script>
-
-    var modal = document.getElementById("image-modal");
+        var modal = document.getElementById("image-modal");
         var modalImage = document.getElementById("modal-image");
         var closeBtn = document.getElementsByClassName("close")[0];
 
@@ -183,33 +195,28 @@
             modalImage.src = img.src;
         }
 
-    closeBtn.onclick = function() {
-        modal.style.display = "none";
-    }
-
-    window.onclick = function(event) {
-        if (event.target == modal) {
+        closeBtn.onclick = function() {
             modal.style.display = "none";
         }
-    }
 
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
 
-        document.getElementById('image-upload-btn').onclick = function() {
-        document.getElementById('image-upload').click();
-    };
+        document.getElementById('image-upload').onchange = function(event) {
+            var file = event.target.files[0];
+            var reader = new FileReader();
 
-    document.getElementById('image-upload').onchange = function(event) {
-        var file = event.target.files[0];
-        var reader = new FileReader();
+            reader.onload = function(e) {
+                var imagePreview = document.getElementById('image-preview');
+                imagePreview.src = e.target.result;
+                document.getElementById('image-preview-container').style.display = 'block';
+            };
 
-        reader.onload = function(e) {
-            var imagePreview = document.getElementById('image-preview');
-            imagePreview.src = e.target.result;
-            document.getElementById('image-preview-container').style.display = 'block';
+            reader.readAsDataURL(file);
         };
-
-        reader.readAsDataURL(file);
-    };
     </script>
 </body>
 </html>
