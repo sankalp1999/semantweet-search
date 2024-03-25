@@ -10,12 +10,21 @@ Pre-filtering by sql operations helps not only filter but also reduce the vector
 
 You can additionally use/edit `projector.py` and [tensorflow projector ](https://projector.tensorflow.org/)to get a visualization of your tweets using t-sne algorithm as shown [here](https://x.com/dejavucoder/status/1771510768053186910?s=20)
 
-**UPDATE** (24/3/2024)
-Add support for CLIP based image searching on tweets_media folder. You can checkout the code in `app_image_search.py` after installing requirements
-i.e step 6. You do not require to run the setup bash scripts for this, it's a standalone program. First run will take
-roughly 5-10 minutes as it creates the embeddings. Subsequent runs will be instant.
+**UPDATE** 
 
-WIP: adding bge-small-en-v1.5 support
+- (25/3/2024)
+`bge-small-en-v1.5` embedding support added. No API key required.
+It's 29th on MTEB leaderboard and 130 MB size, 384 dimension, sequence length 512. Note it's not multi-lingual. 
+
+   Technically, a lot of embeddings from sentence-transformers are possible. You can refer LanceDB docs [here](https://lancedb.github.io/lancedb/embeddings/default_embedding_functions/)
+
+
+- (24/3/2024)
+   Added **CLIP based image searching on tweets_media** folder. Check code [app_image_search.py](app_image_search.py) after installing requirements i.e till step 5. Does not require to run the setup bash scripts for this, it's a standalone program. First run will take roughly 5-10 minutes as it creates the embeddings. Subsequent runs will be instant.
+
+
+This is also available as a standalone light weight repository as [Embeddit](https://github.com/sankalp1999/Embeddit) where you can use any images folder.
+
 
 **Technologies Used:**
 - Twitter archive for data
@@ -54,7 +63,6 @@ WIP: adding bge-small-en-v1.5 support
    ```
    python3 -m venv venv
    ```
-
    Make sure you do this at the root of project.
 4. Activate the virtual environment:
 
@@ -78,23 +86,37 @@ WIP: adding bge-small-en-v1.5 support
    ```
    pip install open_clip_torch
    ```
-6. Set up your OpenAI API key as an environment variable:
+6. (Not required if using sentence transformers) Set up your OpenAI API key as an environment variable:
 
    ```
    export OPENAI_API_KEY=your_api_key
    ```
-
+   
 7. By default, this repo uses openAI `text-embedding-3-large`
 
    You can change it to `text-embedding-3-small`. Change required at two places. 
-- [openai/async_openai_embedding_two.py](openai/async_openai_embedding_two.py) file at line 11.
-- change the MODEL_NAME at [openai/create_lance_db_table_openai_three.py](openai/create_lance_db_table_openai_three.py) at line 8.
+- [openai/async_openai_embedding_two.py](openai/async_openai_embedding_two.py) file around line 11.
+- change the MODEL_NAME at [openai/create_lance_db_table_openai_three.py](openai/create_lance_db_table_openai_three.py) around line 8.
 
 8. Run the setup script:
 
-   ```
+   #### OpenAI
+   ```bash
    chmod +x run_scripts.sh
    ./run_scripts.sh
+   ```
+
+   ### sentence-transformers
+   ```bash
+   chmod +x run_sentence_tf_scripts.sh
+   ./run_sentence_tf_scripts.sh
+   ```
+
+   Uncomment line 15, 16 in [`app.py`](app.py)
+
+   ```python
+   # db = lancedb.connect("data/bge_embeddings")
+   # table = db.open_table("bge_table")
    ```
 
 9. Start the application:
