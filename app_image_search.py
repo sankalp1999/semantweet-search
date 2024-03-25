@@ -7,6 +7,23 @@ from pathlib import Path
 from random import sample
 import pandas as pd
 import os, re
+import json
+
+account_file_path = 'twitter-archive/data/account.js'
+
+with open(account_file_path, 'r', encoding='utf-8') as f:
+    account_data = f.read()
+
+# Extract the JSON part from the account.js file
+account_json_part = account_data[account_data.find('['):]
+
+account = json.loads(account_json_part)
+
+# Extract the username from the account information
+user_handle = account[0]['account']['username']
+user_id = account[0]['account']['accountId']
+
+print('Username:', user_handle)
 
 app = Flask(__name__)
 
@@ -77,6 +94,17 @@ else:
             db.drop_table("media")
         raise e
 
+import re
+
+def get_image_id(image_uri):
+    print(image_uri)
+    pattern = r'/tweets_media/(.+?)-'
+    match = re.search(pattern, image_uri)
+    if match:
+        print(match.group(1))
+        return match.group(1)
+    else:
+        return None
 
 @app.route('/', methods=['POST', 'GET'])
 def image_search():
@@ -88,14 +116,16 @@ def image_search():
         if search_query:
             # Perform text-based image search
             rs = table.search(search_query).limit(40).to_pydantic(Media)
-            results = [{'image_uri': item.image_uri} for item in rs]
+            # results = [{'image_uri': item.image_uri} for item in rs]
+            results = [{'image_uri': item.image_uri, 'image_id': get_image_id(item.image_uri)} for item in rs]
         elif query_image:
             # Perform image-based search
             query_image = Image.open(query_image)
             rs = table.search(query_image).limit(40).to_pydantic(Media)
-            results = [{'image_uri': item.image_uri} for item in rs]
+            # results = [{'image_uri': item.image_uri} for item in rs]
+            results = [{'image_uri': item.image_uri, 'image_id': get_image_id(item.image_uri)} for item in rs]
 
-    return render_template('image_search.html', results=results)
+    return render_template('image_search.html', results=results, user_handle=user_handle)
 
 @app.route('/images/<path:filename>')
 def serve_image(filename):

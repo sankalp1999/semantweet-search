@@ -150,13 +150,41 @@
             text-decoration: none;
             cursor: pointer;
         }
+        
+        .modal-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: auto;
+            width: 80%;
+            max-width: 700px;
+        }
+
+        .twitter-link {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #1da1f2;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .twitter-link:hover {
+            background-color: #0c87c5;
+        }
     </style>
 </head>
 <body>
 
     <div id="image-modal" class="modal">
         <span class="close">&times;</span>
-        <img class="modal-content" id="modal-image">
+        <div class="modal-content">
+            <img id="modal-image" class="tweet-image aspect-ratio">
+            <a id="twitter-link" target="_blank" class="twitter-link">View on Twitter</a>
+        </div>
     </div>
     <div class="search-container">
         <form action="/" method="post" enctype="multipart/form-data">
@@ -174,25 +202,28 @@
         <img id="image-preview" src="" alt="Uploaded Image Preview" class="tweet-image aspect-ratio">
     </div>
 
-    {% if results %}
+        {% if results %}
         <div class="gallery-container">
             {% for result in results %}
                 <div class="gallery-item">
-                    <img src="{{ url_for('serve_image', filename=result.image_uri.split('/')[-1]) }}" alt="Image" class="tweet-image aspect-ratio" onclick="openModal(this)">
+                    <img src="{{ url_for('serve_image', filename=result.image_uri.split('/')[-1]) }}" alt="Image" class="tweet-image aspect-ratio" data-image-id="{{ result.image_id }}" onclick="openModal(this)">
                 </div>
             {% endfor %}
         </div>
-    {% endif %}
+        {% endif %}
     
 
     <script>
         var modal = document.getElementById("image-modal");
         var modalImage = document.getElementById("modal-image");
+        var twitterLink = document.getElementById("twitter-link");
         var closeBtn = document.getElementsByClassName("close")[0];
 
         function openModal(img) {
             modal.style.display = "block";
             modalImage.src = img.src;
+            var imageId = img.getAttribute("data-image-id");
+            twitterLink.href = "https://twitter.com/{{ user_handle }}/status/" + imageId;
         }
 
         closeBtn.onclick = function() {
